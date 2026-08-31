@@ -638,3 +638,47 @@ footer small {
     }
 
 }
+/* ---------- SERVING INFO ---------- */
+
+.portion small {
+    display: block;
+    color: #777777;
+    font-size: 10px;
+    margin-top: 3px;
+}
+
+.serving-info {
+    margin-top: 12px;
+    color: #666666;
+    font-size: 12px;
+}
+
+
+/* ---------- ADD MEAL BUTTON ---------- */
+
+.add-meal-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: #168a3b;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.add-meal-btn:hover {
+    background: #0f6f2f;
+}
+
+.add-meal-btn:active {
+    transform: scale(0.98);
+}
+
+.add-meal-btn.added {
+    background: #ff7a00;
+    color: #000000;
+}
