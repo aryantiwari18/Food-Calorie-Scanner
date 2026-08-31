@@ -556,3 +556,85 @@ footer small {
     }
 
 }
+/* ---------- FOOD SELECTION ---------- */
+
+.food-selection {
+    margin-top: 22px;
+    background: #ffffff;
+    color: #111111;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.selection-info {
+    color: #666666;
+    font-size: 13px;
+    margin: 8px 0 15px;
+}
+
+.food-search {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #dddddd;
+    border-radius: 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+.food-search:focus {
+    border-color: #ff7a00;
+}
+
+.food-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.food-option {
+    border: 2px solid #eeeeee;
+    background: #ffffff;
+    padding: 14px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    transition: 0.2s ease;
+}
+
+.food-option:hover {
+    border-color: #ff7a00;
+    transform: translateY(-2px);
+}
+
+.food-option:active {
+    transform: scale(0.97);
+}
+
+.food-option .food-icon {
+    font-size: 25px;
+    margin-bottom: 5px;
+}
+
+.food-option strong {
+    display: block;
+    font-size: 14px;
+}
+
+.food-option small {
+    display: block;
+    color: #777777;
+    margin-top: 4px;
+    font-size: 10px;
+}
+
+
+/* ---------- MOBILE FOOD LIST ---------- */
+
+@media (max-width: 500px) {
+
+    .food-list {
+        grid-template-columns: 1fr 1fr;
+    }
+
+}
