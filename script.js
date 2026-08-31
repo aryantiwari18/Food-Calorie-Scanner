@@ -1,11 +1,6 @@
-/* =================================
-   FOOD CALORIE SCANNER
-   STAGE 1.5
-   Food + Portion + Meal Tracking
-================================= */
+const WORKER_URL =
+    "https://food-calorie-ai.aryantiwari935962.workers.dev";
 
-
-/* ---------- ELEMENTS ---------- */
 
 const cameraInput =
     document.getElementById("cameraInput");
@@ -28,12 +23,6 @@ const analyzeBtn =
 const foodSelection =
     document.getElementById("foodSelection");
 
-const foodList =
-    document.getElementById("foodList");
-
-const foodSearch =
-    document.getElementById("foodSearch");
-
 const resultSection =
     document.getElementById("resultSection");
 
@@ -52,9 +41,6 @@ const carbs =
 const fat =
     document.getElementById("fat");
 
-const servingSize =
-    document.getElementById("servingSize");
-
 const addMealBtn =
     document.getElementById("addMealBtn");
 
@@ -67,594 +53,601 @@ const progressBar =
 const remainingCalories =
     document.getElementById("remainingCalories");
 
+const servingSize =
+    document.getElementById("servingSize");
+
 const portionButtons =
     document.querySelectorAll(".portion");
 
 
-/* ---------- FOOD DATABASE ---------- */
+/* -------------------------------
+   NUTRITION DATABASE
+-------------------------------- */
 
-const foods = [
+const nutrition = {
 
-    {
+    apple: {
         name: "Apple",
-        icon: "🍎",
         calories: 95,
         protein: 0.5,
         carbs: 25,
         fat: 0.3
     },
 
-    {
+    banana: {
         name: "Banana",
-        icon: "🍌",
         calories: 105,
         protein: 1.3,
         carbs: 27,
         fat: 0.4
     },
 
-    {
+    rice: {
         name: "Rice",
-        icon: "🍚",
         calories: 205,
         protein: 4,
         carbs: 45,
         fat: 0.4
     },
 
-    {
+    chicken: {
         name: "Chicken",
-        icon: "🍗",
         calories: 335,
         protein: 31,
         carbs: 0,
         fat: 22
     },
 
-    {
-        name: "Egg",
-        icon: "🥚",
-        calories: 78,
-        protein: 6,
-        carbs: 0.6,
-        fat: 5
-    },
-
-    {
+    pizza: {
         name: "Pizza",
-        icon: "🍕",
         calories: 285,
         protein: 12,
         carbs: 36,
         fat: 10
     },
 
-    {
+    burger: {
         name: "Burger",
-        icon: "🍔",
         calories: 354,
         protein: 17,
         carbs: 30,
         fat: 20
     },
 
-    {
+    pasta: {
         name: "Pasta",
-        icon: "🍝",
         calories: 250,
         protein: 9,
         carbs: 43,
         fat: 4
     },
 
-    {
+    egg: {
+        name: "Egg",
+        calories: 78,
+        protein: 6,
+        carbs: 0.6,
+        fat: 5
+    },
+
+    salad: {
         name: "Salad",
-        icon: "🥗",
         calories: 120,
         protein: 4,
         carbs: 15,
         fat: 5
     },
 
-    {
+    sandwich: {
         name: "Sandwich",
-        icon: "🥪",
         calories: 300,
         protein: 14,
         carbs: 35,
         fat: 12
     },
 
-    {
-        name: "Dal",
-        icon: "🍲",
-        calories: 180,
-        protein: 9,
-        carbs: 28,
-        fat: 4
-    },
-
-    {
-        name: "Roti",
-        icon: "🫓",
-        calories: 120,
-        protein: 3,
-        carbs: 18,
-        fat: 3
-    },
-
-    {
+    paneer: {
         name: "Paneer",
-        icon: "🧀",
         calories: 265,
         protein: 18,
         carbs: 6,
         fat: 20
     },
 
-    {
-        name: "Idli",
-        icon: "🥣",
-        calories: 58,
-        protein: 2,
-        carbs: 12,
-        fat: 0.4
+    dal: {
+        name: "Dal",
+        calories: 180,
+        protein: 9,
+        carbs: 28,
+        fat: 4
     },
 
-    {
+    roti: {
+        name: "Roti",
+        calories: 120,
+        protein: 3,
+        carbs: 18,
+        fat: 3
+    },
+
+    dosa: {
         name: "Dosa",
-        icon: "🥞",
         calories: 168,
         protein: 4,
         carbs: 28,
         fat: 5
     },
 
-    {
+    idli: {
+        name: "Idli",
+        calories: 58,
+        protein: 2,
+        carbs: 12,
+        fat: 0.4
+    },
+
+    poha: {
         name: "Poha",
-        icon: "🍚",
         calories: 180,
         protein: 4,
         carbs: 30,
         fat: 5
     },
 
-    {
+    samosa: {
         name: "Samosa",
-        icon: "🥟",
         calories: 260,
         protein: 5,
         carbs: 30,
         fat: 13
-    },
-
-    {
-        name: "French Fries",
-        icon: "🍟",
-        calories: 312,
-        protein: 3.4,
-        carbs: 41,
-        fat: 15
-    },
-
-    {
-        name: "Milk",
-        icon: "🥛",
-        calories: 122,
-        protein: 8,
-        carbs: 12,
-        fat: 5
-    },
-
-    {
-        name: "Yogurt",
-        icon: "🥛",
-        calories: 100,
-        protein: 5,
-        carbs: 8,
-        fat: 5
     }
-
-];
-
-
-/* ---------- PORTION MULTIPLIERS ---------- */
-
-const portionMultipliers = {
-
-    small: 0.7,
-
-    medium: 1,
-
-    large: 1.4
 
 };
 
 
-/* ---------- DAILY TARGET ---------- */
+/* -------------------------------
+   PORTION
+-------------------------------- */
+
+const portions = {
+    small: 0.7,
+    medium: 1,
+    large: 1.4
+};
+
+let selectedFood = null;
+let selectedPortion = "medium";
+
+
+/* -------------------------------
+   DAILY CALORIES
+-------------------------------- */
 
 const dailyTarget = 2000;
 
-
-/* ---------- CURRENT FOOD ---------- */
-
-let selectedFood = null;
-
-let selectedPortion = "small";
-
-
-/* ---------- DAILY CALORIES ---------- */
-
 let todayCalories =
-    Number(
-        localStorage.getItem("todayCalories")
-    ) || 0;
+    Number(localStorage.getItem("todayCalories")) || 0;
 
 
-/* ---------- DISPLAY FOOD LIST ---------- */
+/* -------------------------------
+   IMAGE → BASE64
+-------------------------------- */
 
-function displayFoodList(searchText = "") {
+function imageToBase64(file) {
 
-    foodList.innerHTML = "";
+    return new Promise(function(resolve, reject) {
 
-    const search =
-        searchText
-            .toLowerCase()
-            .trim();
+        const reader = new FileReader();
 
+        reader.onload = function() {
+            resolve(reader.result);
+        };
 
-    const filteredFoods =
-        foods.filter(function(food) {
+        reader.onerror = reject;
 
-            return food.name
-                .toLowerCase()
-                .includes(search);
-
-        });
-
-
-    if (filteredFoods.length === 0) {
-
-        foodList.innerHTML = `
-            <p style="
-                grid-column: 1 / -1;
-                text-align: center;
-                color: #777777;
-                padding: 20px;
-            ">
-                No food found.
-            </p>
-        `;
-
-        return;
-    }
-
-
-    filteredFoods.forEach(function(food) {
-
-        const button =
-            document.createElement("button");
-
-        button.className =
-            "food-option";
-
-        button.innerHTML = `
-
-            <div class="food-icon">
-                ${food.icon}
-            </div>
-
-            <strong>
-                ${food.name}
-            </strong>
-
-            <small>
-                ${food.calories} kcal
-            </small>
-
-        `;
-
-
-        button.addEventListener(
-            "click",
-            function() {
-
-                selectFood(food);
-
-            }
-        );
-
-
-        foodList.appendChild(button);
+        reader.readAsDataURL(file);
 
     });
 
 }
 
 
-/* ---------- HANDLE IMAGE ---------- */
+/* -------------------------------
+   IMAGE HANDLING
+-------------------------------- */
 
 function handleImage(file) {
 
-    if (!file) {
-        return;
-    }
-
+    if (!file) return;
 
     if (!file.type.startsWith("image/")) {
 
-        alert(
-            "Please select an image file."
-        );
+        alert("Please select an image.");
 
         return;
     }
 
-
-    const imageURL =
+    previewImage.src =
         URL.createObjectURL(file);
 
+    previewSection.classList.remove("hidden");
 
-    previewImage.src =
-        imageURL;
+    resultSection.classList.add("hidden");
 
-
-    previewSection.classList
-        .remove("hidden");
-
-
-    foodSelection.classList
-        .add("hidden");
-
-
-    resultSection.classList
-        .add("hidden");
-
-
-    selectedFood = null;
-
-
-    setTimeout(function() {
-
-        previewSection.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-    }, 100);
+    if (foodSelection) {
+        foodSelection.classList.add("hidden");
+    }
 
 }
 
 
-/* ---------- CAMERA ---------- */
-
 cameraInput.addEventListener(
     "change",
     function() {
-
-        handleImage(
-            cameraInput.files[0]
-        );
-
+        handleImage(cameraInput.files[0]);
     }
 );
 
-
-/* ---------- GALLERY ---------- */
 
 galleryInput.addEventListener(
     "change",
     function() {
-
-        handleImage(
-            galleryInput.files[0]
-        );
-
+        handleImage(galleryInput.files[0]);
     }
 );
 
 
-/* ---------- ANALYZE ---------- */
+/* -------------------------------
+   AI ANALYSIS
+-------------------------------- */
 
 analyzeBtn.addEventListener(
     "click",
-    function() {
+    async function() {
 
-        if (!previewImage.src) {
+        const file =
+            cameraInput.files[0] ||
+            galleryInput.files[0];
+
+
+        if (!file) {
 
             alert(
-                "Please select a food image first."
+                "Please take or select a food photo first."
             );
 
             return;
         }
 
 
-        foodSelection.classList
-            .remove("hidden");
+        analyzeBtn.disabled = true;
+
+        analyzeBtn.textContent =
+            "🤖 AI is analyzing...";
 
 
-        resultSection.classList
-            .add("hidden");
+        try {
+
+            const image =
+                await imageToBase64(file);
 
 
-        displayFoodList();
+            const response =
+                await fetch(
+                    WORKER_URL,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            image: image
+                        })
+                    }
+                );
 
 
-        setTimeout(function() {
-
-            foodSelection.scrollIntoView({
-                behavior: "smooth",
-                block: "center"
-            });
-
-        }, 150);
-
-    }
-);
+            const predictions =
+                await response.json();
 
 
-/* ---------- SEARCH ---------- */
+            if (!response.ok) {
 
-foodSearch.addEventListener(
-    "input",
-    function() {
+                throw new Error(
+                    predictions.error ||
+                    "AI request failed"
+                );
 
-        displayFoodList(
-            foodSearch.value
-        );
-
-    }
-);
+            }
 
 
-/* ---------- SELECT FOOD ---------- */
-
-function selectFood(food) {
-
-    selectedFood = food;
-
-    selectedPortion = "small";
+            processPrediction(predictions);
 
 
-    foodSelection.classList
-        .add("hidden");
+        } catch (error) {
 
+            console.error(error);
 
-    portionButtons.forEach(
-        function(button) {
-
-            button.classList
-                .remove("active");
+            alert(
+                "AI analysis failed.\n\n" +
+                error.message
+            );
 
         }
-    );
 
 
-    const smallButton =
-        document.querySelector(
-            '.portion[data-size="small"]'
-        );
+        analyzeBtn.disabled = false;
 
-
-    if (smallButton) {
-
-        smallButton.classList
-            .add("active");
+        analyzeBtn.textContent =
+            "🔍 Analyze Food";
 
     }
+);
+
+
+/* -------------------------------
+   PROCESS AI RESULT
+-------------------------------- */
+
+function processPrediction(result) {
+
+    let prediction = null;
+
+
+    /*
+       Hugging Face can return:
+       [
+         {
+           label: "...",
+           score: 0.95
+         }
+       ]
+    */
+
+    if (Array.isArray(result)) {
+
+        prediction = result[0];
+
+    }
+
+
+    /*
+       Some responses may wrap
+       the prediction.
+    */
+
+    if (
+        result.predictions &&
+        Array.isArray(result.predictions)
+    ) {
+
+        prediction =
+            result.predictions[0];
+
+    }
+
+
+    if (!prediction) {
+
+        throw new Error(
+            "AI returned an unexpected result."
+        );
+
+    }
+
+
+    const label =
+        prediction.label || "Unknown";
+
+
+    const confidence =
+        Number(prediction.score || 0);
+
+
+    displayPrediction(
+        label,
+        confidence
+    );
+
+}
+
+
+/* -------------------------------
+   MATCH AI FOOD
+-------------------------------- */
+
+function findFood(label) {
+
+    const text =
+        label.toLowerCase();
+
+
+    for (const key in nutrition) {
+
+        if (
+            text.includes(key) ||
+            key.includes(text)
+        ) {
+
+            return nutrition[key];
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+/* -------------------------------
+   DISPLAY PREDICTION
+-------------------------------- */
+
+function displayPrediction(
+    label,
+    confidence
+) {
+
+    const food =
+        findFood(label);
 
 
     resultSection.classList
         .remove("hidden");
 
 
-    updateNutrition();
+    if (food) {
+
+        selectedFood = food;
+
+        selectedPortion = "medium";
 
 
-    addMealBtn.textContent =
-        "➕ Add to Today's Meals";
-
-    addMealBtn.classList
-        .remove("added");
+        foodName.textContent =
+            food.name;
 
 
-    setTimeout(function() {
-
-        resultSection.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-        });
-
-    }, 150);
-
-}
+        updateNutrition();
 
 
-/* ---------- UPDATE NUTRITION ---------- */
+    } else {
 
-function updateNutrition() {
+        selectedFood = null;
 
-    if (!selectedFood) {
-        return;
+
+        foodName.textContent =
+            label;
+
+
+        calories.textContent =
+            "Not available";
+
+
+        protein.textContent =
+            "--";
+
+
+        carbs.textContent =
+            "--";
+
+
+        fat.textContent =
+            "--";
+
     }
 
 
-    const multiplier =
-        portionMultipliers[
-            selectedPortion
-        ];
+    showConfidence(confidence);
 
 
-    const calculatedCalories =
-        Math.round(
-            selectedFood.calories *
-            multiplier
+    resultSection.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+
+}
+/* -------------------------------
+   CONFIDENCE
+-------------------------------- */
+
+function showConfidence(score) {
+
+    let confidenceElement =
+        document.getElementById(
+            "aiConfidence"
         );
 
 
-    const calculatedProtein =
-        Math.round(
-            selectedFood.protein *
-            multiplier *
-            10
-        ) / 10;
+    if (!confidenceElement) {
+
+        confidenceElement =
+            document.createElement("p");
+
+        confidenceElement.id =
+            "aiConfidence";
+
+        confidenceElement.style =
+            "font-size: 12px;" +
+            "margin-top: 8px;" +
+            "font-weight: bold;";
 
 
-    const calculatedCarbs =
-        Math.round(
-            selectedFood.carbs *
-            multiplier *
-            10
-        ) / 10;
-
-
-    const calculatedFat =
-        Math.round(
-            selectedFood.fat *
-            multiplier *
-            10
-        ) / 10;
-
-
-    foodName.textContent =
-        selectedFood.name;
-
-
-    calories.textContent =
-        calculatedCalories +
-        " kcal";
-
-
-    protein.textContent =
-        calculatedProtein +
-        " g";
-
-
-    carbs.textContent =
-        calculatedCarbs +
-        " g";
-
-
-    fat.textContent =
-        calculatedFat +
-        " g";
-
-
-    const percentage =
-        Math.round(
-            multiplier * 100
+        resultSection.prepend(
+            confidenceElement
         );
 
+    }
 
-    servingSize.textContent =
-        percentage + "%";
 
+    confidenceElement.textContent =
+        "🤖 AI confidence: " +
+        Math.round(score * 100) +
+        "%";
 
 }
 
 
-/* ---------- PORTION BUTTONS ---------- */
+/* -------------------------------
+   NUTRITION
+-------------------------------- */
+
+function updateNutrition() {
+
+    if (!selectedFood) return;
+
+
+    const multiplier =
+        portions[selectedPortion];
+
+
+    calories.textContent =
+        Math.round(
+            selectedFood.calories *
+            multiplier
+        ) + " kcal";
+
+
+    protein.textContent =
+        Math.round(
+            selectedFood.protein *
+            multiplier * 10
+        ) / 10 + " g";
+
+
+    carbs.textContent =
+        Math.round(
+            selectedFood.carbs *
+            multiplier * 10
+        ) / 10 + " g";
+
+
+    fat.textContent =
+        Math.round(
+            selectedFood.fat *
+            multiplier * 10
+        ) / 10 + " g";
+
+
+    if (servingSize) {
+
+        servingSize.textContent =
+            Math.round(
+                multiplier * 100
+            ) + "%";
+
+    }
+
+}
+
+
+/* -------------------------------
+   PORTION BUTTONS
+-------------------------------- */
 
 portionButtons.forEach(
     function(button) {
@@ -663,23 +656,23 @@ portionButtons.forEach(
             "click",
             function() {
 
-                if (!selectedFood) {
-                    return;
-                }
+                if (!selectedFood) return;
 
 
                 portionButtons.forEach(
                     function(item) {
 
-                        item.classList
-                            .remove("active");
+                        item.classList.remove(
+                            "active"
+                        );
 
                     }
                 );
 
 
-                button.classList
-                    .add("active");
+                button.classList.add(
+                    "active"
+                );
 
 
                 selectedPortion =
@@ -695,60 +688,122 @@ portionButtons.forEach(
 );
 
 
-/* ---------- ADD MEAL ---------- */
+/* -------------------------------
+   ADD MEAL
+-------------------------------- */
 
-addMealBtn.addEventListener(
-    "click",
-    function() {
+if (addMealBtn) {
 
-        if (!selectedFood) {
+    addMealBtn.addEventListener(
+        "click",
+        function() {
 
-            alert(
-                "Please select a food first."
+            if (!selectedFood) {
+
+                alert(
+                    "Nutrition data is not available for this food."
+                );
+
+                return;
+            }
+
+
+            const multiplier =
+                portions[selectedPortion];
+
+
+            const mealCalories =
+                Math.round(
+                    selectedFood.calories *
+                    multiplier
+                );
+
+
+            todayCalories +=
+                mealCalories;
+
+
+            localStorage.setItem(
+                "todayCalories",
+                todayCalories
             );
 
-            return;
+
+            updateDailyCalories();
+
+
+            addMealBtn.textContent =
+                "✓ Added to Today's Meals";
+
+
+            addMealBtn.classList.add(
+                "added"
+            );
+
         }
+    );
+
+}
 
 
-        const multiplier =
-            portionMultipliers[
-                selectedPortion
-            ];
+/* -------------------------------
+   DAILY CALORIES
+-------------------------------- */
+
+function updateDailyCalories() {
+
+    if (!dailyCalories) return;
 
 
-        const mealCalories =
-            Math.round(
-                selectedFood.calories *
-                multiplier
-            );
+    dailyCalories.textContent =
+        Math.round(todayCalories);
 
 
-        todayCalories +=
-            mealCalories;
+    let percentage =
+        (todayCalories / dailyTarget) *
+        100;
 
 
-        localStorage.setItem(
-            "todayCalories",
-            todayCalories
-        );
+    percentage =
+        Math.min(percentage, 100);
 
 
-        updateDailyCalories();
+    if (progressBar) {
 
-
-        addMealBtn.textContent =
-            "✓ Added to Today's Meals";
-
-
-        addMealBtn.classList
-            .add("added");
+        progressBar.style.width =
+            percentage + "%";
 
     }
-);
 
 
-/* ---------- REMOVE IMAGE ---------- */
+    if (remainingCalories) {
+
+        const remaining =
+            dailyTarget -
+            todayCalories;
+
+
+        if (remaining > 0) {
+
+            remainingCalories.textContent =
+                Math.round(remaining) +
+                " kcal remaining today";
+
+        } else {
+
+            remainingCalories.textContent =
+                "⚠️ Daily calorie target reached";
+
+        }
+
+    }
+
+}
+
+
+/* -------------------------------
+   REMOVE IMAGE
+-------------------------------- */
 
 removeImage.addEventListener(
     "click",
@@ -763,11 +818,15 @@ removeImage.addEventListener(
         previewSection.classList
             .add("hidden");
 
-        foodSelection.classList
-            .add("hidden");
-
         resultSection.classList
             .add("hidden");
+
+        if (foodSelection) {
+
+            foodSelection.classList
+                .add("hidden");
+
+        }
 
         selectedFood = null;
 
@@ -775,61 +834,8 @@ removeImage.addEventListener(
 );
 
 
-/* ---------- DAILY CALORIES ---------- */
-
-function updateDailyCalories() {
-
-    dailyCalories.textContent =
-        Math.round(todayCalories);
-
-
-    let percentage =
-        (todayCalories / dailyTarget) *
-        100;
-
-
-    if (percentage > 100) {
-
-        percentage = 100;
-
-    }
-
-
-    progressBar.style.width =
-        percentage + "%";
-
-
-    const remaining =
-        dailyTarget -
-        todayCalories;
-
-
-    if (remaining > 0) {
-
-        remainingCalories.textContent =
-            Math.round(remaining) +
-            " kcal remaining today";
-
-
-        progressBar.style.background =
-            "#168a3b";
-
-    } else {
-
-        remainingCalories.textContent =
-            "⚠️ Daily calorie target reached";
-
-
-        progressBar.style.background =
-            "#ff3333";
-
-    }
-
-}
-
-
-/* ---------- INITIALIZE ---------- */
-
-displayFoodList();
+/* -------------------------------
+   START
+-------------------------------- */
 
 updateDailyCalories();
