@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#ff7a00">
+
+    <title>Food Calorie Scanner</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <span>🍽️</span>
+            <div>
+                <h1>Food Scanner</h1>
+                <p>Smart Nutrition Analyzer</p>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <!-- Welcome Section -->
+        <section class="hero">
+            <span class="badge">AI FOOD ANALYZER</span>
+
+            <h2>Analyze Your Food</h2>
+
+            <p>
+                Take a photo or choose an image from your gallery
+                to get nutritional information.
+            </p>
+        </section>
+
+
+        <!-- Scanner Card -->
+        <section class="scanner-card">
+
+            <div class="scanner-icon">
+                📸
+            </div>
+
+            <h3>Scan Your Food</h3>
+
+            <p>
+                Capture a fresh photo or select an existing food image.
+            </p>
+
+            <div class="scan-buttons">
+
+                <!-- Camera -->
+                <label for="cameraInput" class="scan-btn camera-btn">
+                    <span>📷</span>
+                    <strong>Camera</strong>
+                    <small>Take Photo</small>
+                </label>
+
+                <input
+                    type="file"
+                    id="cameraInput"
+                    accept="image/*"
+                    capture="environment"
+                    hidden
+                >
+
+
+                <!-- Gallery -->
+                <label for="galleryInput" class="scan-btn gallery-btn">
+                    <span>🖼️</span>
+                    <strong>Gallery</strong>
+                    <small>Choose Image</small>
+                </label>
+
+                <input
+                    type="file"
+                    id="galleryInput"
+                    accept="image/*"
+                    hidden
+                >
+
+            </div>
+
+        </section>
+
+
+        <!-- Image Preview -->
+        <section id="previewSection" class="preview-section hidden">
+
+            <div class="section-title">
+                <h3>Selected Image</h3>
+                <button id="removeImage">✕</button>
+            </div>
+
+            <div class="image-container">
+                <img id="previewImage" src="" alt="Selected food">
+            </div>
+
+            <button id="analyzeBtn" class="analyze-btn">
+                🔍 Analyze Food
+            </button>
+
+        </section>
+
+
+        <!-- Results -->
+        <section id="resultSection" class="result-section hidden">
+
+            <div class="result-header">
+                <div>
+                    <span class="result-label">DETECTED FOOD</span>
+                    <h2 id="foodName">Food Item</h2>
+                </div>
+
+                <div class="score">
+                    <span>✓</span>
+                </div>
+            </div>
+
+
+            <!-- Calories -->
+            <div class="calorie-card">
+
+                <div>
+                    <span>ESTIMATED CALORIES</span>
+                    <h2 id="calories">0 kcal</h2>
+                </div>
+
+                <div class="fire">
+                    🔥
+                </div>
+
+            </div>
+
+
+            <!-- Nutrition -->
+            <div class="nutrition-grid">
+
+                <div class="nutrition protein">
+                    <span>🥩</span>
+                    <p>Protein</p>
+                    <strong id="protein">0 g</strong>
+                </div>
+
+                <div class="nutrition carbs">
+                    <span>🍞</span>
+                    <p>Carbs</p>
+                    <strong id="carbs">0 g</strong>
+                </div>
+
+                <div class="nutrition fat">
+                    <span>🥑</span>
+                    <p>Fat</p>
+                    <strong id="fat">0 g</strong>
+                </div>
+
+            </div>
+
+
+            <!-- Portion -->
+            <div class="portion-card">
+
+                <h3>Portion Size</h3>
+
+                <div class="portion-options">
+
+                    <button class="portion active" data-size="small">
+                        Small
+                    </button>
+
+                    <button class="portion" data-size="medium">
+                        Medium
+                    </button>
+
+                    <button class="portion" data-size="large">
+                        Large
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Daily Calories -->
+        <section class="daily-card">
+
+            <div class="daily-header">
+
+                <div>
+                    <span>TODAY'S CALORIES</span>
+                    <h2>
+                        <span id="dailyCalories">0</span>
+                        <small>/ 2000 kcal</small>
+                    </h2>
+                </div>
+
+                <div class="target-icon">
+                    🎯
+                </div>
+
+            </div>
+
+
+            <div class="progress">
+                <div
+                    id="progressBar"
+                    class="progress-bar"
+                    style="width: 0%">
+                </div>
+            </div>
+
+            <p id="remainingCalories">
+                2000 kcal remaining today
+            </p>
+
+        </section>
+
+
+        <!-- Features -->
+        <section class="features">
+
+            <div class="feature">
+                <span>🔒</span>
+                <strong>Private</strong>
+                <small>Your images stay on your device</small>
+            </div>
+
+            <div class="feature">
+                <span>⚡</span>
+                <strong>Fast</strong>
+                <small>Quick nutrition analysis</small>
+            </div>
+
+            <div class="feature">
+                <span>📱</span>
+                <strong>Mobile Ready</strong>
+                <small>Designed for your phone</small>
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer>
+
+        <p>
+            🍊 Food Calorie Scanner
+        </p>
+
+        <small>
+            For informational purposes only
+        </small>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
