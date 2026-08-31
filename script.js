@@ -1,14 +1,17 @@
 /* =================================
    FOOD CALORIE SCANNER
-   STAGE 1
-   Manual Food Selection
+   STAGE 1.5
+   Food + Portion + Meal Tracking
 ================================= */
 
 
 /* ---------- ELEMENTS ---------- */
 
-const cameraInput = document.getElementById("cameraInput");
-const galleryInput = document.getElementById("galleryInput");
+const cameraInput =
+    document.getElementById("cameraInput");
+
+const galleryInput =
+    document.getElementById("galleryInput");
 
 const previewSection =
     document.getElementById("previewSection");
@@ -48,6 +51,12 @@ const carbs =
 
 const fat =
     document.getElementById("fat");
+
+const servingSize =
+    document.getElementById("servingSize");
+
+const addMealBtn =
+    document.getElementById("addMealBtn");
 
 const dailyCalories =
     document.getElementById("dailyCalories");
@@ -249,12 +258,37 @@ const foods = [
 ];
 
 
+/* ---------- PORTION MULTIPLIERS ---------- */
+
+const portionMultipliers = {
+
+    small: 0.7,
+
+    medium: 1,
+
+    large: 1.4
+
+};
+
+
+/* ---------- DAILY TARGET ---------- */
+
+const dailyTarget = 2000;
+
+
+/* ---------- CURRENT FOOD ---------- */
+
+let selectedFood = null;
+
+let selectedPortion = "small";
+
+
 /* ---------- DAILY CALORIES ---------- */
 
 let todayCalories =
-    Number(localStorage.getItem("todayCalories")) || 0;
-
-const dailyTarget = 2000;
+    Number(
+        localStorage.getItem("todayCalories")
+    ) || 0;
 
 
 /* ---------- DISPLAY FOOD LIST ---------- */
@@ -264,10 +298,13 @@ function displayFoodList(searchText = "") {
     foodList.innerHTML = "";
 
     const search =
-        searchText.toLowerCase().trim();
+        searchText
+            .toLowerCase()
+            .trim();
+
 
     const filteredFoods =
-        foods.filter(function (food) {
+        foods.filter(function(food) {
 
             return food.name
                 .toLowerCase()
@@ -282,7 +319,7 @@ function displayFoodList(searchText = "") {
             <p style="
                 grid-column: 1 / -1;
                 text-align: center;
-                color: #777;
+                color: #777777;
                 padding: 20px;
             ">
                 No food found.
@@ -293,14 +330,16 @@ function displayFoodList(searchText = "") {
     }
 
 
-    filteredFoods.forEach(function (food) {
+    filteredFoods.forEach(function(food) {
 
         const button =
             document.createElement("button");
 
-        button.className = "food-option";
+        button.className =
+            "food-option";
 
         button.innerHTML = `
+
             <div class="food-icon">
                 ${food.icon}
             </div>
@@ -312,12 +351,13 @@ function displayFoodList(searchText = "") {
             <small>
                 ${food.calories} kcal
             </small>
+
         `;
 
 
         button.addEventListener(
             "click",
-            function () {
+            function() {
 
                 selectFood(food);
 
@@ -332,30 +372,6 @@ function displayFoodList(searchText = "") {
 }
 
 
-/* ---------- CAMERA ---------- */
-
-cameraInput.addEventListener(
-    "change",
-    function () {
-
-        handleImage(cameraInput.files[0]);
-
-    }
-);
-
-
-/* ---------- GALLERY ---------- */
-
-galleryInput.addEventListener(
-    "change",
-    function () {
-
-        handleImage(galleryInput.files[0]);
-
-    }
-);
-
-
 /* ---------- HANDLE IMAGE ---------- */
 
 function handleImage(file) {
@@ -367,7 +383,9 @@ function handleImage(file) {
 
     if (!file.type.startsWith("image/")) {
 
-        alert("Please select an image file.");
+        alert(
+            "Please select an image file."
+        );
 
         return;
     }
@@ -377,16 +395,26 @@ function handleImage(file) {
         URL.createObjectURL(file);
 
 
-    previewImage.src = imageURL;
-
-    previewSection.classList.remove("hidden");
-
-    foodSelection.classList.add("hidden");
-
-    resultSection.classList.add("hidden");
+    previewImage.src =
+        imageURL;
 
 
-    setTimeout(function () {
+    previewSection.classList
+        .remove("hidden");
+
+
+    foodSelection.classList
+        .add("hidden");
+
+
+    resultSection.classList
+        .add("hidden");
+
+
+    selectedFood = null;
+
+
+    setTimeout(function() {
 
         previewSection.scrollIntoView({
             behavior: "smooth",
@@ -398,11 +426,39 @@ function handleImage(file) {
 }
 
 
-/* ---------- ANALYZE BUTTON ---------- */
+/* ---------- CAMERA ---------- */
+
+cameraInput.addEventListener(
+    "change",
+    function() {
+
+        handleImage(
+            cameraInput.files[0]
+        );
+
+    }
+);
+
+
+/* ---------- GALLERY ---------- */
+
+galleryInput.addEventListener(
+    "change",
+    function() {
+
+        handleImage(
+            galleryInput.files[0]
+        );
+
+    }
+);
+
+
+/* ---------- ANALYZE ---------- */
 
 analyzeBtn.addEventListener(
     "click",
-    function () {
+    function() {
 
         if (!previewImage.src) {
 
@@ -414,20 +470,18 @@ analyzeBtn.addEventListener(
         }
 
 
-        /*
-           Stage 1:
-           Open food selection instead
-           of randomly choosing food.
-        */
+        foodSelection.classList
+            .remove("hidden");
 
-        foodSelection.classList.remove("hidden");
 
-        resultSection.classList.add("hidden");
+        resultSection.classList
+            .add("hidden");
+
 
         displayFoodList();
 
 
-        setTimeout(function () {
+        setTimeout(function() {
 
             foodSelection.scrollIntoView({
                 behavior: "smooth",
@@ -440,11 +494,11 @@ analyzeBtn.addEventListener(
 );
 
 
-/* ---------- FOOD SEARCH ---------- */
+/* ---------- SEARCH ---------- */
 
 foodSearch.addEventListener(
     "input",
-    function () {
+    function() {
 
         displayFoodList(
             foodSearch.value
@@ -458,53 +512,54 @@ foodSearch.addEventListener(
 
 function selectFood(food) {
 
-    foodSelection.classList.add("hidden");
+    selectedFood = food;
 
-    displayFood(food);
-
-}
+    selectedPortion = "small";
 
 
-/* ---------- DISPLAY RESULT ---------- */
-
-function displayFood(food) {
-
-    foodName.textContent =
-        food.name;
-
-    calories.textContent =
-        food.calories + " kcal";
-
-    protein.textContent =
-        food.protein + " g";
-
-    carbs.textContent =
-        food.carbs + " g";
-
-    fat.textContent =
-        food.fat + " g";
+    foodSelection.classList
+        .add("hidden");
 
 
-    resultSection.classList.remove("hidden");
+    portionButtons.forEach(
+        function(button) {
 
+            button.classList
+                .remove("active");
 
-    /*
-       Add calories to daily total.
-    */
-
-    todayCalories += food.calories;
-
-
-    localStorage.setItem(
-        "todayCalories",
-        todayCalories
+        }
     );
 
 
-    updateDailyCalories();
+    const smallButton =
+        document.querySelector(
+            '.portion[data-size="small"]'
+        );
 
 
-    setTimeout(function () {
+    if (smallButton) {
+
+        smallButton.classList
+            .add("active");
+
+    }
+
+
+    resultSection.classList
+        .remove("hidden");
+
+
+    updateNutrition();
+
+
+    addMealBtn.textContent =
+        "➕ Add to Today's Meals";
+
+    addMealBtn.classList
+        .remove("added");
+
+
+    setTimeout(function() {
 
         resultSection.scrollIntoView({
             behavior: "smooth",
@@ -516,56 +571,122 @@ function displayFood(food) {
 }
 
 
-/* ---------- REMOVE IMAGE ---------- */
+/* ---------- UPDATE NUTRITION ---------- */
 
-removeImage.addEventListener(
-    "click",
-    function () {
+function updateNutrition() {
 
-        previewImage.src = "";
-
-        cameraInput.value = "";
-
-        galleryInput.value = "";
-
-        previewSection.classList.add("hidden");
-
-        foodSelection.classList.add("hidden");
-
-        resultSection.classList.add("hidden");
-
+    if (!selectedFood) {
+        return;
     }
-);
 
 
-/* ---------- PORTION SIZE ---------- */
+    const multiplier =
+        portionMultipliers[
+            selectedPortion
+        ];
+
+
+    const calculatedCalories =
+        Math.round(
+            selectedFood.calories *
+            multiplier
+        );
+
+
+    const calculatedProtein =
+        Math.round(
+            selectedFood.protein *
+            multiplier *
+            10
+        ) / 10;
+
+
+    const calculatedCarbs =
+        Math.round(
+            selectedFood.carbs *
+            multiplier *
+            10
+        ) / 10;
+
+
+    const calculatedFat =
+        Math.round(
+            selectedFood.fat *
+            multiplier *
+            10
+        ) / 10;
+
+
+    foodName.textContent =
+        selectedFood.name;
+
+
+    calories.textContent =
+        calculatedCalories +
+        " kcal";
+
+
+    protein.textContent =
+        calculatedProtein +
+        " g";
+
+
+    carbs.textContent =
+        calculatedCarbs +
+        " g";
+
+
+    fat.textContent =
+        calculatedFat +
+        " g";
+
+
+    const percentage =
+        Math.round(
+            multiplier * 100
+        );
+
+
+    servingSize.textContent =
+        percentage + "%";
+
+
+}
+
+
+/* ---------- PORTION BUTTONS ---------- */
 
 portionButtons.forEach(
-    function (button) {
+    function(button) {
 
         button.addEventListener(
             "click",
-            function () {
+            function() {
+
+                if (!selectedFood) {
+                    return;
+                }
+
 
                 portionButtons.forEach(
-                    function (item) {
+                    function(item) {
 
-                        item.classList.remove(
-                            "active"
-                        );
+                        item.classList
+                            .remove("active");
 
                     }
                 );
 
 
-                button.classList.add("active");
+                button.classList
+                    .add("active");
 
 
-                const size =
+                selectedPortion =
                     button.dataset.size;
 
 
-                adjustPortion(size);
+                updateNutrition();
 
             }
         );
@@ -574,70 +695,84 @@ portionButtons.forEach(
 );
 
 
-/* ---------- PORTION CALCULATION ---------- */
+/* ---------- ADD MEAL ---------- */
 
-function adjustPortion(size) {
+addMealBtn.addEventListener(
+    "click",
+    function() {
 
-    const selectedName =
-        foodName.textContent;
+        if (!selectedFood) {
+
+            alert(
+                "Please select a food first."
+            );
+
+            return;
+        }
 
 
-    const food =
-        foods.find(function (item) {
-
-            return item.name ===
-                selectedName;
-
-        });
+        const multiplier =
+            portionMultipliers[
+                selectedPortion
+            ];
 
 
-    if (!food) {
-        return;
+        const mealCalories =
+            Math.round(
+                selectedFood.calories *
+                multiplier
+            );
+
+
+        todayCalories +=
+            mealCalories;
+
+
+        localStorage.setItem(
+            "todayCalories",
+            todayCalories
+        );
+
+
+        updateDailyCalories();
+
+
+        addMealBtn.textContent =
+            "✓ Added to Today's Meals";
+
+
+        addMealBtn.classList
+            .add("added");
+
     }
+);
 
 
-    let multiplier = 1;
+/* ---------- REMOVE IMAGE ---------- */
 
+removeImage.addEventListener(
+    "click",
+    function() {
 
-    if (size === "small") {
+        previewImage.src = "";
 
-        multiplier = 0.7;
+        cameraInput.value = "";
 
-    } else if (size === "medium") {
+        galleryInput.value = "";
 
-        multiplier = 1;
+        previewSection.classList
+            .add("hidden");
 
-    } else if (size === "large") {
+        foodSelection.classList
+            .add("hidden");
 
-        multiplier = 1.4;
+        resultSection.classList
+            .add("hidden");
+
+        selectedFood = null;
 
     }
-
-
-    calories.textContent =
-        Math.round(
-            food.calories * multiplier
-        ) + " kcal";
-
-
-    protein.textContent =
-        Math.round(
-            food.protein * multiplier
-        ) + " g";
-
-
-    carbs.textContent =
-        Math.round(
-            food.carbs * multiplier
-        ) + " g";
-
-
-    fat.textContent =
-        Math.round(
-            food.fat * multiplier
-        ) + " g";
-
-}
+);
 
 
 /* ---------- DAILY CALORIES ---------- */
@@ -649,7 +784,8 @@ function updateDailyCalories() {
 
 
     let percentage =
-        (todayCalories / dailyTarget) * 100;
+        (todayCalories / dailyTarget) *
+        100;
 
 
     if (percentage > 100) {
@@ -664,7 +800,8 @@ function updateDailyCalories() {
 
 
     const remaining =
-        dailyTarget - todayCalories;
+        dailyTarget -
+        todayCalories;
 
 
     if (remaining > 0) {
@@ -673,6 +810,7 @@ function updateDailyCalories() {
             Math.round(remaining) +
             " kcal remaining today";
 
+
         progressBar.style.background =
             "#168a3b";
 
@@ -680,6 +818,7 @@ function updateDailyCalories() {
 
         remainingCalories.textContent =
             "⚠️ Daily calorie target reached";
+
 
         progressBar.style.background =
             "#ff3333";
